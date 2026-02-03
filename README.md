@@ -1,1 +1,1 @@
-# Deep-Learning-Project-CNN
+# DL-Project-CNN
