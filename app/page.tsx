@@ -36,7 +36,7 @@ export default function Home() {
         "AumFaldu/traffic-sign-recognition-backend"
       )
 
-      const res = await client.predict("/run/predict", {
+      const res = await client.predict("/predict", {
         image: file,
       })
 
