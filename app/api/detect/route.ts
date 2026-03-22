@@ -4,7 +4,7 @@ export async function POST(req: Request) {
     const image = body.image;
 
     const hfRes = await fetch(
-      "https://aumfaldu-traffic-sign-recognition-backend.hf.space/run/predict",
+      "https://aumfaldu-traffic-sign-recognition-backend.hf.space/api/predict",
       {
         method: "POST",
         headers: {
