@@ -54,7 +54,7 @@ export default function Home() {
 
       // 3. Handle Gradio's response format
       // Gradio returns { "data": ["base64_string_or_url"] }
-      iif (data.output) {
+      if (data.output) {
   const output = data.output
 
   const finalImage = output.startsWith("data:image")
