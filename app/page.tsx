@@ -142,7 +142,7 @@ export default function Home() {
     </div>
   )
 }
-    } catch (err) {
+    catch (err) {
       console.error(err)
       alert("Something went wrong during detection.")
     } finally {
