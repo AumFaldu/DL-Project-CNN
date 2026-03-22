@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Loader2, Upload, ImageIcon } from "lucide-react"
 
 export default function Home() {
   const [file, setFile] = useState<File | null>(null)
@@ -10,30 +11,33 @@ export default function Home() {
   const [result, setResult] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const handleFileChange = (f: File | null) => {
-    setFile(f)
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] || null
+    setFile(selectedFile)
     setResult(null)
 
-    if (f) {
-      setPreview(URL.createObjectURL(f))
+    if (selectedFile) {
+      setPreview(URL.createObjectURL(selectedFile))
+    } else {
+      setPreview(null)
     }
   }
 
   const handleDetect = async () => {
     if (!file) return
     setLoading(true)
-
-    const base64Image = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
-      reader.onload = () => {
-        const res = reader.result as string
-        resolve(res.split(",")[1])
-      }
-      reader.onerror = reject
-    })
+    setResult(null)
 
     try {
+      // 1. Convert file to Base64 DataURL
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = (error) => reject(error)
+      })
+
+      // 2. Call our internal Next.js API route
       const res = await fetch("/api/detect", {
         method: "POST",
         headers: {
@@ -44,48 +48,102 @@ export default function Home() {
         }),
       })
 
-      const data = await res.json()
-      setResult(`data:image/png;base64,${data.data[0]}`)
-    } catch (err: any) {
-      alert("Detection failed")
-    }
+      if (!res.ok) throw new Error("Detection failed on server")
 
-    setLoading(false)
+      const data = await res.json()
+
+      // 3. Handle Gradio's response format
+      // Gradio returns { "data": ["base64_string_or_url"] }
+      if (data.data && data.data[0]) {
+        const output = data.data[0]
+        // Check if it already has the data:image prefix; if not, add it
+        const finalImage = output.startsWith("data:image") 
+          ? output 
+          : `data:image/png;base64,${output}`
+        
+        setResult(finalImage)
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Something went wrong during detection.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload Traffic Image</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange(e.target.files?.[0] || null)}
-          />
+    <div className="container max-w-4xl mx-auto py-12 px-4 space-y-8">
+      <div className="text-center space-y-2">
+        <h1 className="text-4xl font-bold tracking-tight">Traffic Sign Recognition</h1>
+        <p className="text-muted-foreground">Upload an image to detect and classify traffic signs using YOLOv8.</p>
+      </div>
 
-          {preview && (
-            <img src={preview} className="rounded border max-h-72" />
-          )}
-
-          <Button onClick={handleDetect} disabled={!file || loading}>
-            {loading ? "Detecting..." : "Detect"}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {result && (
-        <Card>
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Input Section */}
+        <Card className="overflow-hidden">
           <CardHeader>
-            <CardTitle>Prediction Result</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              <Upload className="w-5 h-5" />
+              Upload Image
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <img src={result} className="rounded border w-full" />
+          <CardContent className="space-y-4">
+            <div className="grid w-full items-center gap-1.5">
+              <input
+                id="picture"
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            {preview && (
+              <div className="relative mt-4 rounded-lg overflow-hidden border bg-muted aspect-video flex items-center justify-center">
+                <img src={preview} alt="Preview" className="object-contain w-full h-full" />
+              </div>
+            )}
+
+            <Button 
+              onClick={handleDetect} 
+              className="w-full" 
+              disabled={!file || loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                "Run Detection"
+              )}
+            </Button>
           </CardContent>
         </Card>
-      )}
+
+        {/* Results Section */}
+        <Card className="overflow-hidden">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ImageIcon className="w-5 h-5" />
+              Detection Result
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center justify-center min-h-[300px] bg-muted/30">
+            {result ? (
+              <div className="rounded-lg overflow-hidden border bg-background w-full h-full">
+                <img src={result} alt="Result" className="object-contain w-full h-full" />
+              </div>
+            ) : (
+              <div className="text-center p-6">
+                <p className="text-muted-foreground italic">
+                  {loading ? "Analyzing image frames..." : "Processed image will appear here."}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
