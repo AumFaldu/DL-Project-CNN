@@ -10,21 +10,23 @@ export async function POST(req: Request) {
       return new Response(JSON.stringify({ error: "No image provided" }), { status: 400 });
     }
 
-    // 1. Connect to your specific Hugging Face Space
-    // This library handles all the complex routing for you automatically
+    // ⭐ Convert Base64 → Blob
+    const resFetch = await fetch(image);
+    const blob = await resFetch.blob();
+
+    const file = new File([blob], "image.png", { type: blob.type });
+
     const client = await Client.connect("AumFaldu/traffic-sign-recognition-backend");
 
-    // 2. Run the prediction
-    // We pass the base64 string directly; the client handles the conversion
     const result = await client.predict("/predict", {
-      image: image,
+      image: file,   // ⭐ VERY IMPORTANT
     });
 
-    // 3. Return the result back to your page.tsx
     return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
+
   } catch (err: any) {
     console.error("Vercel API Error:", err);
     return new Response(
