@@ -18,10 +18,15 @@ export default function Home() {
     formData.append("image", file)
 
     try {
-      const res = await fetch(
-        "https://huggingface.co/spaces/AumFaldu/traffic-sign-recognition-backend",
-        { method: "POST", body: formData }
-      )
+      const res = await fetch("/api/detect", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    image: base64Image,
+  }),
+});
       if (!res.ok) {
         const errText = await res.text()
         throw new Error(errText || "Prediction failed")
