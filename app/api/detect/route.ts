@@ -4,24 +4,36 @@ export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
-    const { image } = await req.json();
+    // ⭐ Get FormData
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
 
-    const blob = await (await fetch(image)).blob();
-    const file = new File([blob], "image.png");
+    if (!file) {
+      return Response.json(
+        { error: "No file uploaded" },
+        { status: 400 }
+      );
+    }
 
-    const client = await Client.connect("AumFaldu/traffic-sign-recognition-backend");
+    // ⭐ Connect to HuggingFace Space
+    const client = await Client.connect(
+      "AumFaldu/traffic-sign-recognition-backend"
+    );
 
+    // ⭐ Run prediction
     const result = await client.predict("/run/predict", {
       image: file,
     });
 
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // ⭐ Return HF response directly
+    return Response.json(result);
 
   } catch (err: any) {
-    console.error(err);
-    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
+    console.error("Detection API Error:", err);
+
+    return Response.json(
+      { error: "Detection failed", details: err?.message },
+      { status: 500 }
+    );
   }
 }
