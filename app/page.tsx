@@ -15,6 +15,8 @@ export default function Home() {
     const selected = e.target.files?.[0] || null
     setFile(selected)
     setResult(null)
+    // Clean up old object URLs to avoid memory leaks
+    if (preview) URL.revokeObjectURL(preview)
     setPreview(selected ? URL.createObjectURL(selected) : null)
   }
 
@@ -28,20 +30,46 @@ export default function Home() {
       const form = new FormData()
       form.append("file", file)
 
-      const res = await fetch(`${window.location.origin}/api/detect`, {
+      // Using the relative path since your API is now verified at /api/detect
+      const res = await fetch("/api/detect", {
         method: "POST",
         body: form,
       })
 
-      if (!res.ok) throw new Error("Detection failed on server")
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.details || "Detection failed on server")
+      }
 
       const data = await res.json()
-      if (data?.data?.[0]?.url) {
-        setResult(data.data[0].url)
+      
+      /**
+       * Gradio Response Handling:
+       * Usually data looks like: { data: [ { url: "...", name: "..." } ] }
+       * or sometimes just: { data: [ "https://url-to-image.png" ] }
+       */
+      if (data?.data?.[0]) {
+        const output = data.data[0]
+        let finalUrl = ""
+
+        if (typeof output === "object" && output.url) {
+          finalUrl = output.url
+        } else if (typeof output === "string") {
+          finalUrl = output
+        }
+
+        // Fix for relative URLs: If it doesn't start with http, prefix with the HF Space origin
+        if (finalUrl && !finalUrl.startsWith("http")) {
+          finalUrl = `https://aumfaldu-traffic-sign-recognition-backend.hf.space/file=${finalUrl}`
+        }
+
+        setResult(finalUrl)
+      } else {
+        throw new Error("No detection data received from the model.")
       }
-    } catch (err) {
-      console.error(err)
-      alert("Something went wrong during detection.")
+    } catch (err: any) {
+      console.error("Detection Error:", err)
+      alert(err.message || "Something went wrong during detection.")
     } finally {
       setLoading(false)
     }
@@ -59,7 +87,7 @@ export default function Home() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Upload */}
+        {/* Upload Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -73,7 +101,7 @@ export default function Home() {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm"
+              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm bg-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
             />
 
             {preview && (
@@ -103,7 +131,7 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Result */}
+        {/* Result Card */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -112,19 +140,22 @@ export default function Home() {
             </CardTitle>
           </CardHeader>
 
-          <CardContent className="flex items-center justify-center min-h-[320px] bg-muted/30">
+          <CardContent className="flex items-center justify-center min-h-[320px] bg-muted/30 rounded-md border border-dashed mx-6 mb-6">
             {result ? (
               <img
                 src={result}
-                className="rounded-lg border object-contain max-h-[400px]"
+                className="rounded-lg border shadow-sm object-contain max-h-[400px]"
                 alt="result"
+                onError={() => alert("Failed to load result image. Check if Gradio Space is active.")}
               />
             ) : (
-              <p className="text-muted-foreground italic">
-                {loading
-                  ? "Model is analyzing image..."
-                  : "Result image will appear here"}
-              </p>
+              <div className="text-center space-y-2">
+                <p className="text-muted-foreground italic text-sm">
+                  {loading
+                    ? "Model is analyzing image..."
+                    : "Result image will appear here"}
+                </p>
+              </div>
             )}
           </CardContent>
         </Card>
