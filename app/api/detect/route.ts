@@ -18,7 +18,7 @@ export async function POST(req: Request) {
 
     const client = await Client.connect("AumFaldu/traffic-sign-recognition-backend");
 
-    const result = await client.predict("/predict", {
+    const result = await client.predict("/run/predict", {
       image: file,   // ⭐ VERY IMPORTANT
     });
 
