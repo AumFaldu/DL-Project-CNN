@@ -19,7 +19,7 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        "https://huggingface.co/spaces/AumFaldu/traffic-sign-recognition-backend/predict/image",
+        "https://huggingface.co/spaces/AumFaldu/traffic-sign-recognition-backend",
         { method: "POST", body: formData }
       )
       if (!res.ok) {
