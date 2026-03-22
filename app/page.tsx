@@ -28,7 +28,7 @@ export default function Home() {
       const form = new FormData()
       form.append("file", file)
 
-      const res = await fetch("/api/detect", {
+      const res = await fetch(`${window.location.origin}/api/detect`, {
         method: "POST",
         body: form,
       })
