@@ -1,39 +1,34 @@
-export const runtime = "nodejs"
+import { Client } from "@gradio/client";
+
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const image = body.image;
+    const { image } = await req.json();
 
-    // Use the /run/predict endpoint (most compatible for simple POST requests)
-    const hfRes = await fetch(
-      "https://aumfaldu-traffic-sign-recognition-backend.hf.space/run/predict",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          data: [image],
-        }),
-      }
-    );
-
-    if (!hfRes.ok) {
-      const errorText = await hfRes.text();
-      console.error("HF Error:", errorText);
-      return new Response(JSON.stringify({ error: "HF Space returned error", details: errorText }), { status: hfRes.status });
+    if (!image) {
+      return new Response(JSON.stringify({ error: "No image provided" }), { status: 400 });
     }
 
-    const data = await hfRes.json();
+    // 1. Connect to your specific Hugging Face Space
+    // This library handles all the complex routing for you automatically
+    const client = await Client.connect("AumFaldu/traffic-sign-recognition-backend");
 
-    return new Response(JSON.stringify(data), {
+    // 2. Run the prediction
+    // We pass the base64 string directly; the client handles the conversion
+    const result = await client.predict("/predict", {
+      image: image,
+    });
+
+    // 3. Return the result back to your page.tsx
+    return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (err) {
+  } catch (err: any) {
+    console.error("Vercel API Error:", err);
     return new Response(
-      JSON.stringify({ error: "Detection failed" }),
+      JSON.stringify({ error: "Detection failed", details: err.message }),
       { status: 500 }
     );
   }
