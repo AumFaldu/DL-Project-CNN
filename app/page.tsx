@@ -54,14 +54,15 @@ export default function Home() {
 
       // 3. Handle Gradio's response format
       // Gradio returns { "data": ["base64_string_or_url"] }
-      if (data.data && data.data[0]) {
-        const output = data.data[0]
-        // Check if it already has the data:image prefix; if not, add it
-        const finalImage = output.startsWith("data:image") 
-          ? output 
-          : `data:image/png;base64,${output}`
-        
-        setResult(finalImage)
+      iif (data.output) {
+  const output = data.output
+
+  const finalImage = output.startsWith("data:image")
+    ? output
+    : `data:image/png;base64,${output}`
+
+  setResult(finalImage)
+}
       }
     } catch (err) {
       console.error(err)
