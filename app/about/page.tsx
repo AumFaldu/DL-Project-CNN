@@ -45,7 +45,7 @@ export default function About() {
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col">
       {/* Hero Section */}
       <section className="flex flex-col items-center justify-center text-center py-32 px-4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white">
-        <h1 className="text-5xl md:text-6xl font-bold mb-6">About DL Project</h1>
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">About Our Project</h1>
         <p className="text-lg md:text-2xl mb-8 max-w-2xl">
           Learn more about our deep learning project for traffic sign detection.
         </p>
