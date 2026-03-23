@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, Upload, ImageIcon } from "lucide-react"
@@ -11,11 +11,19 @@ export default function Home() {
   const [result, setResult] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
+  // Cleanup object URLs
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview)
+      if (result) URL.revokeObjectURL(result)
+    }
+  }, [preview, result])
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0] || null
     setFile(selected)
     setResult(null)
-    // Clean up old object URLs to avoid memory leaks
+
     if (preview) URL.revokeObjectURL(preview)
     setPreview(selected ? URL.createObjectURL(selected) : null)
   }
@@ -27,49 +35,28 @@ export default function Home() {
     setResult(null)
 
     try {
-      const form = new FormData()
-      form.append("file", file)
+      const formData = new FormData()
+      formData.append("image", file)
 
-      // Using the relative path since your API is now verified at /api/detect
-      const res = await fetch("/api/detect", {
-        method: "POST",
-        body: form,
-      })
+      const response = await fetch(
+        "https://dl-project-cnn-backend.onrender.com/predict",
+        {
+          method: "POST",
+          body: formData,
+        }
+      )
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.details || "Detection failed on server")
+      if (!response.ok) {
+        throw new Error("Detection failed")
       }
 
-      const data = await res.json()
-      
-      /**
-       * Gradio Response Handling:
-       * Usually data looks like: { data: [ { url: "...", name: "..." } ] }
-       * or sometimes just: { data: [ "https://url-to-image.png" ] }
-       */
-      if (data?.data?.[0]) {
-        const output = data.data[0]
-        let finalUrl = ""
+      const blob = await response.blob()
+      const imageUrl = URL.createObjectURL(blob)
 
-        if (typeof output === "object" && output.url) {
-          finalUrl = output.url
-        } else if (typeof output === "string") {
-          finalUrl = output
-        }
-
-        // Fix for relative URLs: If it doesn't start with http, prefix with the HF Space origin
-        if (finalUrl && !finalUrl.startsWith("http")) {
-          finalUrl = `https://aumfaldu-traffic-sign-recognition-backend.hf.space/file=${finalUrl}`
-        }
-
-        setResult(finalUrl)
-      } else {
-        throw new Error("No detection data received from the model.")
-      }
-    } catch (err: any) {
-      console.error("Detection Error:", err)
-      alert(err.message || "Something went wrong during detection.")
+      setResult(imageUrl)
+    } catch (error) {
+      console.error(error)
+      alert("Detection failed. Server may be sleeping 😴 Try again.")
     } finally {
       setLoading(false)
     }
@@ -87,7 +74,7 @@ export default function Home() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Upload Card */}
+        {/* Upload */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -101,7 +88,7 @@ export default function Home() {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm bg-background file:border-0 file:bg-transparent file:text-sm file:font-medium"
+              className="flex h-10 w-full rounded-md border px-3 py-2 text-sm bg-background"
             />
 
             {preview && (
@@ -122,7 +109,7 @@ export default function Home() {
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Detecting...
+                  Waking Server & Detecting...
                 </>
               ) : (
                 "Run Detection"
@@ -131,7 +118,7 @@ export default function Home() {
           </CardContent>
         </Card>
 
-        {/* Result Card */}
+        {/* Result */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -146,16 +133,13 @@ export default function Home() {
                 src={result}
                 className="rounded-lg border shadow-sm object-contain max-h-[400px]"
                 alt="result"
-                onError={() => alert("Failed to load result image. Check if Gradio Space is active.")}
               />
             ) : (
-              <div className="text-center space-y-2">
-                <p className="text-muted-foreground italic text-sm">
-                  {loading
-                    ? "Model is analyzing image..."
-                    : "Result image will appear here"}
-                </p>
-              </div>
+              <p className="text-muted-foreground italic text-sm">
+                {loading
+                  ? "Model is analyzing image..."
+                  : "Result image will appear here"}
+              </p>
             )}
           </CardContent>
         </Card>
