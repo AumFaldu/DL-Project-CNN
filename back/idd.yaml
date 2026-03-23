@@ -1,0 +1,20 @@
+
+path: /Users/aum/Developer/DL-Project/idd_yolo
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: car
+  1: person
+  2: autorickshaw
+  3: truck
+  4: bus
+  5: motorcycle
+  6: bicycle
+  7: animal
+  8: traffic_light
+  9: traffic_sign
+  10: vehicle_fallback
+  11: animal_fallback
+  12: unlabeled
