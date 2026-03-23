@@ -8,7 +8,7 @@ export default function About() {
     { src: "/BoxR_curve.png", alt: "Recall Curve" },
     { src: "/confusion_matrix.png", alt: "Confusion Matrix" },
     { src: "/confusion_matrix_normalized.png", alt: "Normalized Confusion Matrix" },
-    { src: "/labels.png", alt: "Labels" },
+    { src: "/labels.jpg", alt: "Labels" },
     { src: "/results.png", alt: "Results" },
   ];
 
