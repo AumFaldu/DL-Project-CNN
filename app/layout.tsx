@@ -1,9 +1,8 @@
 import './globals.css'
 import Link from 'next/link'
 import { Geist } from "next/font/google";
-import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata = {
   title: 'Traffic Sign Recognition',
@@ -11,8 +10,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
-      <body className="bg-gray-50">
+    <html lang="en" className={geist.variable}>
+      <body className="bg-gray-50 font-sans">
         <header className="bg-indigo-600 text-white p-4 flex justify-between items-center">
           <h1 className="text-xl font-bold">Traffic Sign Recognition</h1>
           <nav className="space-x-4">
