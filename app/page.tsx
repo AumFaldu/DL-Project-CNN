@@ -8,10 +8,8 @@ export default function Home() {
   const [outputImage, setOutputImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const API_URL = "https://dl-project-cnn-backend.onrender.com/predict";
-
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
+    if (e.target.files?.[0]) {
       setFile(e.target.files[0]);
       setInputImage(URL.createObjectURL(e.target.files[0]));
       setOutputImage(null);
@@ -23,10 +21,10 @@ export default function Home() {
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("image", file); 
+    formData.append("image", file);
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch("/api/predict", {
         method: "POST",
         body: formData,
       });
@@ -35,8 +33,8 @@ export default function Home() {
 
       const data = await res.json();
       setOutputImage(`data:image/png;base64,${data.image}`);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert("Prediction failed. Check console for details.");
     } finally {
       setLoading(false);
@@ -53,6 +51,7 @@ export default function Home() {
         </p>
       </section>
 
+      {/* Upload & Prediction */}
       <section className="py-24 px-6 md:px-20 flex flex-col items-center space-y-6">
         <input
           type="file"
