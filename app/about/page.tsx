@@ -65,6 +65,37 @@ export default function About() {
           </div>
         </div>
 
+        {/* Model Training Details */}
+        <div className="max-w-4xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Model Training Details</h2>
+          <p className="text-center text-gray-700 dark:text-gray-300 mb-8">
+            Key parameters and dataset used to train our traffic sign detection model.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700 dark:text-gray-300">
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+              <h3 className="font-semibold mb-2">Dataset</h3>
+              <p>IDD_Detection</p>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+              <h3 className="font-semibold mb-2">Epochs</h3>
+              <p>30</p>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+              <h3 className="font-semibold mb-2">Batch Size</h3>
+              <p>16</p>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+              <h3 className="font-semibold mb-2">Optimizer</h3>
+              <p>Adam</p>
+            </div>
+            <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+              <h3 className="font-semibold mb-2">Input Image Size</h3>
+              <p>640x640</p>
+            </div>
+          </div>
+        </div>
+
         {/* Model Insights */}
         <div className="max-w-6xl mx-auto mt-16">
           <h2 className="text-3xl font-bold mb-8 text-center">Model Insights</h2>
