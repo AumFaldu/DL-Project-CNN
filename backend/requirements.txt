@@ -4,8 +4,7 @@ pillow
 numpy
 python-multipart
 opencv-python-headless
-torch==2.2.2+cpu
-torchvision==0.17.2+cpu
+torch==2.10.0+cpu
+torchvision==0.25.0+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
-
 ultralytics
