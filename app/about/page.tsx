@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 export default function About() {
   const modelImages = [
     { src: "/BoxF1_curve.png", alt: "F1 Curve" },
@@ -11,6 +13,8 @@ export default function About() {
     { src: "/labels.jpg", alt: "Labels" },
     { src: "/results.png", alt: "Results" },
   ];
+
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col">
@@ -66,18 +70,20 @@ export default function About() {
           <h2 className="text-3xl font-bold mb-8 text-center">Model Insights</h2>
           <p className="text-center text-gray-700 dark:text-gray-300 mb-12">
             Visualizations and performance metrics from our traffic sign detection model.
+            Click an image to enlarge.
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-12">
             {modelImages.map((img) => (
               <div
                 key={img.src}
-                className="border rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-800 hover:scale-105 transition"
+                className="border rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-800 hover:scale-105 transition cursor-pointer"
+                onClick={() => setLightboxImage(img.src)}
               >
                 <img
                   src={img.src}
                   alt={img.alt}
-                  className="object-cover w-full h-64"
+                  className="object-contain w-full h-[400px]"
                 />
                 <p className="p-2 text-center text-gray-700 dark:text-gray-300">{img.alt}</p>
               </div>
@@ -97,6 +103,20 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      {/* Lightbox */}
+      {lightboxImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          onClick={() => setLightboxImage(null)}
+        >
+          <img
+            src={lightboxImage}
+            alt="Enlarged model visualization"
+            className="max-h-[90vh] max-w-[90vw] object-contain rounded-xl shadow-lg"
+          />
+        </div>
+      )}
 
       {/* Footer */}
       <footer className="py-12 px-6 text-center bg-gray-200 dark:bg-gray-800 mt-auto">
