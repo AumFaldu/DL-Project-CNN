@@ -15,11 +15,6 @@ export default function About() {
       <section className="py-24 px-6 md:px-20 space-y-16">
         {/* Project Overview */}
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:space-x-12 space-y-8 md:space-y-0">
-          <img
-            src="/images/traffic-signs.png"
-            alt="Traffic Signs"
-            className="w-full md:w-1/2 rounded-lg shadow"
-          />
           <div className="md:w-1/2">
             <h2 className="text-3xl font-bold mb-4">Project Overview</h2>
             <p className="text-gray-700 dark:text-gray-300 text-lg">
@@ -65,11 +60,6 @@ export default function About() {
               practical use of modern deep learning techniques for real-world applications.
             </p>
           </div>
-          <img
-            src="/images/developer.jpg"
-            alt="Developer"
-            className="w-full md:w-1/2 rounded-lg shadow"
-          />
         </div>
       </section>
 
