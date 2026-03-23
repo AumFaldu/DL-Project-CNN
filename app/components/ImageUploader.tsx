@@ -12,8 +12,8 @@ export default function ImageUploader() {
     if (e.target.files?.[0]) {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
-      setInputImage(URL.createObjectURL(selectedFile)); // create preview URL
-      setOutputImage(null); // reset previous prediction
+      setInputImage(URL.createObjectURL(selectedFile));
+      setOutputImage(null);
     }
   };
 
