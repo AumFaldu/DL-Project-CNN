@@ -16,6 +16,31 @@ export default function About() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Class-wise metrics
+  const classMetrics = [
+    { name: "Car", precision: 0.751, recall: 0.719, mAP50: 0.756 },
+    { name: "Person", precision: 0.789, recall: 0.491, mAP50: 0.581 },
+    { name: "Autorickshaw", precision: 0.779, recall: 0.593, mAP50: 0.667 },
+    { name: "Truck", precision: 0.782, recall: 0.774, mAP50: 0.819 },
+    { name: "Bus", precision: 0.867, recall: 0.767, mAP50: 0.828 },
+    { name: "Motorcycle", precision: 0.782, recall: 0.678, mAP50: 0.719 },
+    { name: "Bicycle", precision: 0.575, recall: 0.27, mAP50: 0.305 },
+    { name: "Animal", precision: 0.663, recall: 0.192, mAP50: 0.26 },
+    { name: "Vehicle_fallback", precision: 0.491, recall: 0.099, mAP50: 0.115 },
+  ];
+
+  // Additional model details
+  const modelDetails = [
+    { label: "Optimizer", value: "AdamW" },
+    { label: "Learning Rate", value: "0.001" },
+    { label: "Loss Function", value: "Cross-Entropy + CIoU" },
+    { label: "Training Augmentations", value: "Flip, Rotate, Color Jitter, Mosaic" },
+    { label: "Layers", value: "YOLOv8n with 225 layers" },
+    { label: "Training Cache", value: "Enabled for faster data loading" },
+    { label: "Framework", value: "PyTorch 2.1 + Ultralytics YOLOv8" },
+    { label: "Precision", value: "FP16 mixed precision" },
+  ];
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col">
       {/* Hero Section */}
@@ -83,15 +108,15 @@ export default function About() {
             </div>
             <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
               <h3 className="font-semibold mb-2">Batch Size</h3>
-              <p>16</p>
+              <p>4</p>
             </div>
             <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
               <h3 className="font-semibold mb-2">Optimizer</h3>
-              <p>Adam</p>
+              <p>AdamW</p>
             </div>
             <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
               <h3 className="font-semibold mb-2">Input Image Size</h3>
-              <p>640x640</p>
+              <p>640×640</p>
             </div>
           </div>
         </div>
@@ -117,6 +142,46 @@ export default function About() {
                   className="object-contain w-full h-[400px]"
                 />
                 <p className="p-2 text-center text-gray-700 dark:text-gray-300">{img.alt}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Class-wise Performance */}
+        <div className="max-w-6xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Class-wise Performance (mAP50)</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full table-auto border border-gray-300 dark:border-gray-600 rounded-lg">
+              <thead className="bg-gray-200 dark:bg-gray-800">
+                <tr>
+                  <th className="px-4 py-2 text-left">Class</th>
+                  <th className="px-4 py-2">Precision</th>
+                  <th className="px-4 py-2">Recall</th>
+                  <th className="px-4 py-2">mAP50</th>
+                </tr>
+              </thead>
+              <tbody>
+                {classMetrics.map((cls) => (
+                  <tr key={cls.name} className="border-t border-gray-300 dark:border-gray-600">
+                    <td className="px-4 py-2">{cls.name}</td>
+                    <td className="px-4 py-2 text-center">{cls.precision.toFixed(3)}</td>
+                    <td className="px-4 py-2 text-center">{cls.recall.toFixed(3)}</td>
+                    <td className="px-4 py-2 text-center">{cls.mAP50.toFixed(3)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Additional Model Details */}
+        <div className="max-w-4xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Additional Model Details</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700 dark:text-gray-300">
+            {modelDetails.map((detail) => (
+              <div key={detail.label} className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
+                <h3 className="font-semibold mb-2">{detail.label}</h3>
+                <p>{detail.value}</p>
               </div>
             ))}
           </div>
