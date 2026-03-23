@@ -23,9 +23,6 @@ export default function Navbar() {
             <Link href="/about" className="hover:text-gray-300">
               About
             </Link>
-            <Link href="/contact" className="hover:text-gray-300">
-              Contact
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
