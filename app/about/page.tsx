@@ -1,6 +1,17 @@
 "use client";
 
 export default function About() {
+  const modelImages = [
+    { src: "/BoxF1_curve.png", alt: "F1 Curve" },
+    { src: "/BoxPR_curve.png", alt: "Precision-Recall Curve" },
+    { src: "/BoxP_curve.png", alt: "Precision Curve" },
+    { src: "/BoxR_curve.png", alt: "Recall Curve" },
+    { src: "/confusion_matrix.png", alt: "Confusion Matrix" },
+    { src: "/confusion_matrix_normalized.png", alt: "Normalized Confusion Matrix" },
+    { src: "/labels.png", alt: "Labels" },
+    { src: "/results.png", alt: "Results" },
+  ];
+
   return (
     <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 flex flex-col">
       {/* Hero Section */}
@@ -50,8 +61,32 @@ export default function About() {
           </div>
         </div>
 
+        {/* Model Insights */}
+        <div className="max-w-6xl mx-auto mt-16">
+          <h2 className="text-3xl font-bold mb-8 text-center">Model Insights</h2>
+          <p className="text-center text-gray-700 dark:text-gray-300 mb-12">
+            Visualizations and performance metrics from our traffic sign detection model.
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {modelImages.map((img) => (
+              <div
+                key={img.src}
+                className="border rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-800 hover:scale-105 transition"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="object-cover w-full h-64"
+                />
+                <p className="p-2 text-center text-gray-700 dark:text-gray-300">{img.alt}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* About the Developer */}
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:space-x-12 space-y-8 md:space-y-0">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center md:space-x-12 space-y-8 md:space-y-0 mt-16">
           <div className="md:w-1/2">
             <h2 className="text-3xl font-bold mb-4">About the Developer</h2>
             <p className="text-gray-700 dark:text-gray-300 text-lg">
