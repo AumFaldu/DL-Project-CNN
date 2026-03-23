@@ -12,7 +12,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16 items-center">
           {/* Logo / Brand */}
           <div className="flex-shrink-0 font-bold text-xl">
-            DL Project
+            Traffic Sign Detection
           </div>
 
           {/* Desktop Links */}
@@ -22,6 +22,9 @@ export default function Navbar() {
             </Link>
             <Link href="/about" className="hover:text-gray-300">
               About
+            </Link>
+            <Link href="/contact" className="hover:text-gray-300">
+              Contact
             </Link>
           </div>
 
@@ -63,9 +66,6 @@ export default function Navbar() {
           </Link>
           <Link href="/about" className="block px-3 py-2 rounded hover:bg-indigo-500">
             About
-          </Link>
-          <Link href="/contact" className="block px-3 py-2 rounded hover:bg-indigo-500">
-            Contact
           </Link>
         </div>
       )}
