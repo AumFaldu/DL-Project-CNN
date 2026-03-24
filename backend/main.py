@@ -17,13 +17,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ⭐ CPU optimisation
 torch.set_num_threads(1)
 
 # Load YOLO model once at startup
 model = YOLO("best.pt")
 
-# ⭐ Warmup model (VERY IMPORTANT for Render)
 @app.on_event("startup")
 def warmup():
     dummy = Image.new("RGB", (320, 320))
