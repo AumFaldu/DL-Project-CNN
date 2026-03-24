@@ -35,7 +35,7 @@ export default function About() {
     { label: "Learning Rate", value: "0.001" },
     { label: "Loss Function", value: "Cross-Entropy + CIoU" },
     { label: "Training Augmentations", value: "Flip, Rotate, Color Jitter, Mosaic" },
-    { label: "Layers", value: "YOLOv8n with 225 layers" },
+    { label: "Layers", value: "YOLOv8s with 130 layers" },
     { label: "Training Cache", value: "Enabled for faster data loading" },
     { label: "Framework", value: "PyTorch 2.1 + Ultralytics YOLOv8" },
     { label: "Precision", value: "FP16 mixed precision" },
