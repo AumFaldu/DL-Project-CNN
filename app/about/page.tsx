@@ -16,7 +16,6 @@ export default function About() {
 
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
-  // Class-wise metrics
   const classMetrics = [
     { name: "Car", precision: 0.751, recall: 0.719, mAP50: 0.756 },
     { name: "Person", precision: 0.789, recall: 0.491, mAP50: 0.581 },
@@ -29,7 +28,6 @@ export default function About() {
     { name: "Vehicle_fallback", precision: 0.491, recall: 0.099, mAP50: 0.115 },
   ];
 
-  // Additional model details
   const modelDetails = [
     { label: "Optimizer", value: "AdamW" },
     { label: "Learning Rate", value: "0.001" },
