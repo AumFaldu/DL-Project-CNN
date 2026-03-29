@@ -25,8 +25,8 @@ def warmup():
     global model
     model = YOLO("best.pt")
     
-    dummy = Image.new("RGB", (320, 320))
-    model.predict(dummy, imgsz=320, conf=0.25)
+    dummy = Image.new("RGB", (640, 640))
+    model.predict(dummy, imgsz=640, conf=0.1)
 
 @app.get("/")
 def home():
@@ -34,16 +34,25 @@ def home():
 
 @app.post("/predict")
 async def predict_image(image: UploadFile = File(...)):
+    global model
     try:
+        if model is None:
+            return JSONResponse({"error": "Model not loaded yet"}, status_code=500)
+
+        if not image.content_type.startswith("image/"):
+            return JSONResponse({"error": "Invalid file type"}, status_code=400)
+
         img_bytes = await image.read()
         img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
+
         if img.width > 1600:
             img.thumbnail((1600, 1600))
+
         with torch.no_grad():
             results = model.predict(
                 img,
-                imgsz=320,
-                conf=0.25,
+                imgsz=640,
+                conf=0.1,
                 device="cpu",
                 verbose=False
             )
