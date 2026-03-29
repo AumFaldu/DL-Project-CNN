@@ -6,7 +6,6 @@ from PIL import Image
 import io
 import base64
 import torch
-import os
 
 app = FastAPI()
 
@@ -61,7 +60,3 @@ async def predict_image(image: UploadFile = File(...)):
 
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 10000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port)
